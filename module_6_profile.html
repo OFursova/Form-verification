@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Forms and Cookies</title>
+    <style>
+        body {
+            background-color: antiquewhite;
+        }
+        div {
+            display: flex;
+            justify-content: flex-end;
+            width: 96%;
+            padding: 2vh;
+            border-bottom: 1px solid grey;
+        }
+        form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-content: flex-start;
+            flex-wrap: wrap;
+            width: 60vw;
+            height: 80vh;
+            margin: 5vh auto;
+        }
+
+        form > legend {
+            border: none;
+            text-align: center;
+            flex-basis: 100%;
+            font-weight: bold;
+        }
+
+        input, select, label {
+            flex-basis: 48%;
+            border-radius: 15px;
+            height: 2em;
+            margin-bottom: 1vh;
+        }
+
+        input[type="submit"]{
+            flex-basis: 100%;
+            margin-top: 2vh;
+        }
+
+        .alert {
+            float: right;
+            color: maroon;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <p id="greeting"></p><button id="exit">Exit</button>
+    </div>
+    <form method="get" name="profile" id="profile">
+        <legend>User Info</legend>
+        <label for="fname"><p>First name: </p></label>
+        <label for="lname"><p>Last name: </p></label> 
+        <input type="text" name="firstName" id="fname" required>
+        <input type="text" name="lastName" id="lname" required>
+        <label for="b-day"><p>Year of birth: </p></label>
+        <label for=gender"><p>Gender: </p></label>
+        <input type="number" name="bDay" id="b-day" required>
+        <select name="gender" id="gender" required>
+            <option value="male">male</option>
+            <option value="female">female</option>
+        </select>
+        <label for="phone"><p>Phone number: </p></label>
+        <label for="skype"><p>Skype: </p></label>
+        <input type="text" name="phone" id="phone">
+        <input type="text" name="skype" id="skype">
+        <input type="submit" value="Save" name="saveProfile">
+    </form>
+
+<script src="script.js"></script>
+<script>
+const profile = document.forms.profile;
+const firstName = profile.elements.firstName;
+const lastName = profile.elements.lastName;
+const birthYear = profile.elements.bDay;
+const gender = profile.elements.gender;
+const phone = profile.elements.phone;
+const skype = profile.elements.skype;
+const saveBtn = profile.elements.saveProfile;
+const greeting = document.getElementById('greeting');
+const labels = profile.getElementsByTagName('label');
+
+if (getCookie('firstName')) firstName.value = getCookie('firstName');
+if (getCookie('lastName')) lastName.value = getCookie('lastName');
+if (getCookie('birthYear')) birthYear.value = getCookie('birthYear');
+if (getCookie('gender')) gender.value = getCookie('gender');
+if (getCookie('phone')) phone.value = getCookie('phone');
+if (getCookie('skype')) skype.value = getCookie('skype');
+
+profile.addEventListener('submit', (event) => {
+    event.preventDefault();
+    console.log(event)
+    let fName = firstName.value;
+    let namePattern = /^[A-Z]('[A-Z])?[a-z]+-?[a-z]*$/;
+    console.log(namePattern.test(fName))
+    if (!namePattern.test(fName) || fName.length > 20) {
+        let msg = `<p class="alert">First name shouldn't be longer than 20 digits</p>`;
+        labels[0].innerHTML += msg;
+    } else setCookie('firstName', firstName.value, 1);
+    let lName = lastName.value;
+    if (!namePattern.test(lName) || lName.length > 20) {
+        let msg = `<p class="alert">Last name shouldn't be longer than 20 digits</p>`;
+        labels[1].innerHTML += msg;
+    } else setCookie('lastName', lastName.value, 1);
+    let bYear = birthYear.value;
+    let yearPattern = /^19\d{2}$|^20[012]\d$/;
+    console.log(yearPattern.test(bYear))
+    if (!yearPattern.test(bYear) || !yearPattern.test(bYear)) {
+        let msg = `<p class="alert">Wrong year</p>`;
+        labels[2].innerHTML += msg;
+    } else setCookie('birthYear', birthYear.value, 1);
+    if (gender.value) setCookie('gender', gender.value, 1);
+    let phoneN = phone.value;
+    let phonePattern = /^([0-9]-|\(|\)|\s[0-9]){10,12}$/;
+    console.log(phonePattern.test(phoneN))
+    if (!phonePattern.test(phoneN)) {
+        let msg = `<p class="alert">Wrong phone format</p>`;
+        labels[4].innerHTML += msg;
+    } else setCookie('phone', phone.value, 1);
+    let skypeAdress = skype.value;
+    let skypePattern = /[A-Za-z0-9\.-]+/;
+    console.log(skypePattern.test(skypeAdress))
+    if (!skypePattern.test(skypeAdress)) {
+        let msg = `<p class="alert">Wrong format</p>`;
+        labels[5].innerHTML += msg;
+    } else setCookie('skype', skype.value, 1);
+    
+    if (getCookie('firstName')&&getCookie('lastName')&&getCookie('birthYear')&&getCookie('gender')){
+    profile.submit();}
+})
+
+
+if (getCookie('userE')) {
+    greeting.innerHTML = `<p>Hello, ${getCookie('userE')}!</p>`;
+    greeting.nextSibling.addEventListener('click', () => {
+        setCookie('userE', '', -1);
+        setCookie('userP', '', -1);
+        setCookie('repP', '', -1);
+        setCookie('firstName', '', -1);
+        setCookie('lastName', '', -1);
+        setCookie('birthYear', '', -1);
+        setCookie('gender', '', -1);
+        setCookie('phone', '', -1);
+        setCookie('skype', '', -1);
+        location.assign("module_6_reg.html");
+    })
+} else location.assign("module_6_reg.html");
+</script>
+</body>
+</html>

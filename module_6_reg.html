@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Forms and Cookies</title>
+    <style>
+        body {
+            background-color: antiquewhite;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-content: flex-start;
+            width: 30vw;
+            height: 50vh;
+            margin: 5vh auto;
+        }
+
+        form > legend {
+            border: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        form > input {
+            flex-basis: 100%;
+            border-radius: 15px;
+        }
+
+        input[type="submit"] {
+            margin-top: 2vh;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alert {
+            color: maroon;
+        }
+    </style>
+</head>
+<body>
+    <form action="module_6_profile.html" method="get" name="registration" id="registration">
+        <legend>Registration</legend>
+        <label for="email"><p>Email: </p>
+        </label><input type="email" name="email" id="email" required>
+        <label for="password"><p>Password: </p>
+        </label><input type="password" name="password" id="password" required>
+        <label for="reppass"><p>Repeat: </p>
+        </label><input type="password" name="reppass" id="reppass" required>
+        <input type="submit" value="Sign Up" name="button">
+    </form>
+
+<script src="script.js"></script>
+<script>
+const regForm = document.forms.registration;
+const userEmail = regForm.elements.email;
+const userPswd = regForm.elements.password;
+const repPswd = regForm.elements.reppass;
+const submitBtn = regForm.elements.button;
+const greeting = document.getElementById('greeting');
+
+regForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    let email = userEmail.value;
+    const emailPattern = /^([A-Za-z]+[\.-_]*[A-Za-z]*){3,}@[a-z]+\.[a-z]{3}$/;
+    if (!emailPattern.test(email)) {
+        let msg = `<p class="alert">Wrong email adress</p>`;
+        let label = userEmail.previousSibling;
+        label.innerHTML += msg;
+    } else setCookie('userE', email, 1);
+    let psw = userPswd.value;
+    const bigLetters = /[A-Z]+/g;
+    const smallLetters = /[a-z]+/g;
+    const numbers = /\d+/g;
+    if (psw.length == 0 || psw.length < 6) {
+        let msg = `<p class="alert">Password must be longer than 6 digits</p>`;
+        let label = userPswd.previousSibling;
+        label.innerHTML += msg;
+    } 
+    if (bigLetters.test(psw) && smallLetters.test(psw) && numbers.test(psw) && psw.length >= 6) {
+        setCookie('userP', psw, 1);
+    } else {
+        let msg = `<p class="alert">Wrong password</p>`;
+        let label = userPswd.previousSibling;
+        label.innerHTML += msg;
+    }
+    let reppsw = repPswd.value;
+    if (psw !== reppsw) {
+        let msg = `<p class="alert">Passwords must match</p>`;
+        let label = repPswd.previousSibling;
+        label.innerHTML += msg;
+    } else setCookie('repP', reppsw, 1);
+
+    if (getCookie('userE') && getCookie('userP')) {
+    console.log('got cookie')
+    regForm.submit();
+    }
+})
+
+console.log(document.cookie)
+console.log(getCookie('userE'))
+if (getCookie('userE') && getCookie('userP')) {
+    console.log('got cookie')
+    location.assign("module_6_profile.html");
+}
+</script>
+</body>
+</html>
